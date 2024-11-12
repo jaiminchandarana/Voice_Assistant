@@ -16,7 +16,7 @@ This repository contains a voice assistant program, which you can activate and c
 
 1.  **Install Python**:
 
-- Download Python from [Microsoft Store]((https://www.microsoft.com/store/productId/9NCVDN91XZQP?ocid=pdpshare)) or from the [official Python website](https://www.python.org/downloads/).
+- Download Python from [Microsoft Store](https://www.microsoft.com/store/productId/9NCVDN91XZQP?ocid=pdpshare) or from the [official Python website](https://www.python.org/downloads/).
 
 2.  **Add Python to System Path**:
 
