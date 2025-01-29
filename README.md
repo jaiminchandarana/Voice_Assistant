@@ -166,7 +166,7 @@ pip install -r requirements.txt
 
 3.  **"What is battery percentage?"**: Tells current system battery percentage.
 
-4.  **"Do some calculations"**: Performs basic math operations, e.g., **"2 + 2"**.
+4.  **"Do some calculations"**: Performs basic math operations, For example., **"2 + 2"**.
 
 5.  **"Scrape website"**: Scrapes data from a specified website (provide URL).
 
