@@ -9,7 +9,7 @@ def find():
     speak("What do you want to find sir?")
     find = takecommand().lower()
     speak(f"Finding {find} in {chat} chat sir.")
-    npath = r"C:\Program Files\WindowsApps\5319275A.WhatsAppDesktop_2.2445.7.0_x64__cv1g1gvanyjgm\WhatsApp.exe"
+    npath = r"" #your whatsapp.exe path here.
     os.startfile(npath)
     pyautogui.click(489,156)
     pyautogui.click(489,156)
