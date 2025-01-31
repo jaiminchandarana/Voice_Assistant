@@ -29,7 +29,7 @@ def video_download(url, save_path):
         speak(f"An error occurred: {e}")
 
 def download(video_url):
-    save_dir = r"" //Your download path here.
+    save_dir = r"" #Your download path here.
 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
