@@ -43,7 +43,7 @@ def alarm(time):
         if horeal==datetime.datetime.now().hour:
             if mireal==datetime.datetime.now().minute:
                 speak("It's time to wake up sir.")
-                winsound.PlaySound(r'C:\Users\Jaimin\Downloads\thoralarm.wav',winsound.SND_LOOP)
+                winsound.PlaySound(r'.\thoralarm.wav',winsound.SND_LOOP)
             elif mireal<datetime.datetime.now().minute:
                 break
                 
