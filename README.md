@@ -44,6 +44,12 @@ C:\Users\[Your Username]\AppData\Local\Packages\PythonSoftwareFoundation.Python.
 
 - Extract and place `chromedriver.exe` in the same folder as `jarvis.py`.
 
+
+
+4.  **Install Tesseract-OCR**:
+
+- A `tesseract.exe` file is provided in this repository add that file path in code.
+
   
 
 ## Running the Voice Assistant
