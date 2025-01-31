@@ -6,16 +6,16 @@ def favouritesong():
     speak("Which playlist would you like to play sir?")
     choice = takecommand().lower()
     def firstp():
-        webbrowser.open("https://www.youtube.com/watch?v=ntLv_697xo8&list=RDGMEMCMFH2exzjBeE_zAHHJOdxg&start_radio=1&rv=XeJtg2hFnhs&ab_channel=PrinceJadon")
+        webbrowser.open("") # Your favourite song link here.
         speak("Opening your favourite song sir.")
     def secondp():
-        webbrowser.open("https://www.youtube.com/watch?v=1sRaLqtHXQU&list=RD1sRaLqtHXQU&start_radio=1&ab_channel=SanjuLofiEdits")
+        webbrowser.open("") # Your favourite song link here.
         speak("Opening your favourite song sir.")
     def thirdp():
-        webbrowser.open("https://www.youtube.com/watch?v=PaoeGgJs3Ac&list=RDPaoeGgJs3Ac&start_radio=1&rv=PaoeGgJs3Ac&t=0&ab_channel=T-Series")
+        webbrowser.open("") # Your favourite song link here.
         speak("Opening your favourite song sir.")
     def fourth():
-        webbrowser.open("https://www.youtube.com/watch?v=BwiaxAos5cg&list=RDBwiaxAos5cg&start_radio=1&ab_channel=SRLofi")
+        webbrowser.open("") # Your favourite song link here.
         speak("Opening your favourite song sir.")
     if "first" in choice:
         firstp()
