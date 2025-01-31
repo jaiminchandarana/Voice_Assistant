@@ -45,7 +45,3 @@ def extract_lyrics(query):
         if match:
             return match.group(1).strip()
     return None
-
-if __name__ == "__main__":
-    lyrics = extract_lyrics("which song is this deewani by kailash kher")
-    song(lyrics)
