@@ -178,6 +178,8 @@ pip install -r requirements.txt
 
 6.  **"Check internet speed"**: Measures and displays download/upload speeds.
 
+7.  **"Extract text [Path of image]"**: Extracts text from image.
+
   
 
 ### Interaction and Rest Mode
