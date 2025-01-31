@@ -15,6 +15,7 @@ def takecommand():
     with sr.Microphone() as source:
         print("Listening...")
         r.pause_threshold = 1
+        winsound.PlaySound(r'.\Activate_Tone.wav', winsound.SND_LOOP)
         audio = r.listen(source,timeout=15,phrase_time_limit=100)
     try:
         print("Recognizing...")
