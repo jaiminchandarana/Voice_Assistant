@@ -178,15 +178,19 @@ pip install -r requirements.txt
 
 6.  **"Check internet speed"**: Measures and displays download/upload speeds.
 
-7.  **"Extract text [Path of image]"**: Extracts text from image.
+7.  **"Data analysis [Csv file]"**: Performs data analysis on provided data.
+
+8.  **"Extract text [Path of image]"**: Extracts text from image.
+
+9.  **"Download video from youtube [Link of video]"**: Downloads youtube video in your system.
 
   
 
 ### Interaction and Rest Mode
 
-1.  **"[Ask any question]"**: Jarvis responds to general questions, such as coding queries or trivia.
+1.  **"Ask any question"**: Jarvis responds to general questions, such as coding queries or trivia.
 
-2.  **"[Perform task]"**: Jarvis performs specific task on provided data. *(Provide data).*
+2.  **"Perform task"**: Jarvis performs specific task on provided data. *(Provide data).*
 
 3.  **"You can rest"**: Puts Jarvis in idle mode. Activate again by saying **"Hey Jarvis"**.
 
