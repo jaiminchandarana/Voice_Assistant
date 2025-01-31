@@ -10,7 +10,7 @@ def video_call(name):
         words_after_call = words[index:]
         calling = " ".join(words_after_call)
     speak(f"Calling {calling} sir")
-    npath = r"" \\ Your whatsapp.exe path here.
+    npath = r"" # Your whatsapp.exe path here.
     os.startfile(npath)
     pyautogui.click(489,156)
     pyautogui.click(489,156)
