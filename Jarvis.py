@@ -1,10 +1,6 @@
 import importlib
 import sys
-import speech_recognition as sr
 from audio import (speak,takecommand)
-from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
-from ctypes import cast, POINTER
-
 
 def dynamic_import(module_name):
     if module_name not in sys.modules:
@@ -12,6 +8,7 @@ def dynamic_import(module_name):
     return sys.modules[module_name]    
 
 def wakeword():
+    sr = dynamic_import("speech_recognition")
     r = sr.Recognizer()
     with sr.Microphone() as source:
         # r.adjust_for_ambient_noise(source)
@@ -42,160 +39,6 @@ def wish():
 
     speak("This is jarvis in your servis sir. How can i help you?")
 
-def pdfreader():
-    PyPDF2 = dynamic_import("PyPDF2")
-    book = open('Advertisement.pdf', 'rb')
-    pdfReader = PyPDF2.PdfReader(book) 
-    pages = len(pdfReader.pages) 
-    speak(f"Total number of pages in the PDF is {pages}.")
-    speak("Please enter the number of the page I have to read, sir.")
-    pg = int(input("Please enter the page number: "))
-    if pg < 0 or pg >= pages: 
-        speak("Invalid page number.")
-        pdfreader()
-    else:
-        page = pdfReader.pages[pg]-1
-        text = page.extract_text()  
-        speak(text)
-
-def set_volume_level(level):
-    CLSCTX_ALL = dynamic_import("comtypes").CLSCTX_ALL
-    devices = AudioUtilities.GetSpeakers()
-    interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-    volume = cast(interface, POINTER(IAudioEndpointVolume))
-    volume.SetMasterVolumeLevelScalar(level / 100, None)
-
-def calculation():
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Listening...")
-        r.pause_threshold = 1
-        audio = r.listen(source,timeout=5,phrase_time_limit=10)
-    try:
-        print("Recognizing...")
-        query = r.recognize_google(audio,language='en-in')
-        print(f"User said {query}")
-    except sr.UnknownValueError:
-        speak("Sorry, I didn't understand that.")
-        return calculation()
-    except sr.RequestError:
-        speak("Sorry, there's an issue with the speech recognition service.")
-        return calculation()
-
-    def get_operator_fn(op):
-        operator = dynamic_import("operator")
-        return {
-            "+" : operator.add,
-            "-" : operator.sub,
-            "*" : operator.mul,
-            "divided" : operator.truediv,  # Fixed operator name for division
-        }.get(op, None)
-
-    def eval_binary_expr(op1, oper, op2):
-        try:
-            op1, op2 = int(op1), int(op2)
-            operation = get_operator_fn(oper)
-            if operation:
-                return operation(op1, op2)
-            else:
-                speak(f"Sorry, I don't recognize the operator '{oper}'")
-                return calculation()
-        except ZeroDivisionError:
-            speak("Division by zero is not allowed.")
-            return calculation()
-        except ValueError:
-            speak("Invalid numbers provided.")
-            return calculation()
-
-    tokens = query.split()
-    if len(tokens) == 3:
-        result = eval_binary_expr(*tokens)
-        if result is not None:
-            speak(f"Your result is {result}")
-    else:
-        speak("Sorry, I couldn't understand the calculation request.")
-
-def click_action(image, action_name):
-    pyautogui = dynamic_import("pyautogui")
-    location = pyautogui.locateOnScreen(image, confidence=0.8)
-    if location is not None:
-        pyautogui.click(pyautogui.center(location))
-        print(f'Call {action_name}d.')
-    elif "Receive" in action_name:
-        speak(f"I guess there is no call incoming to receive sir.")
-    elif "Decline" in action_name:
-        speak(f"I guess there is no call ongoing to decline or end sir.")
-    else:
-        speak("Please try again sir.") 
-           
-def pwdgenerator():
-    string = dynamic_import("string")
-    speak("How long your password should be sir?")
-    char_values = string.ascii_letters + string.digits + string.punctuation
-    def pwd_generator():
-        w2n = dynamic_import("word2number").w2n
-        try:
-            password = ""
-            query = takecommand()
-            lenght = w2n.word_to_num(query.split()[0])
-        except ValueError:
-            speak("Please provide an integer number sir.")
-            return pwdgenerator()
-
-        for i in range(lenght):
-            random = dynamic_import("random")
-            Random = random.choice(char_values) 
-            password += Random
-
-        print(password)
-        speak(f"Your generated password is {password}")
-
-        speak("Do you want to generate password again sir?")
-        again = takecommand()
-        if "yes" in again or "generate again" in again:
-            pwdgenerator()
-        else:
-            pass
-    pwd_generator()
-
-def scrape():
-    genai = dynamic_import("google.generativeai")
-    re = dynamic_import("re")
-    scrape_website = dynamic_import("scrape").scrape_website
-    extract_body_content = dynamic_import("scrape").extract_body_content
-    clean_body_content = dynamic_import("scrape").clean_body_content
-    split_dom_content = dynamic_import("scrape").split_dom_content
-    main = dynamic_import("parse").main
-    genai.configure(api_key="") #-> Add your Google gemini api key here.
-    def main():
-        # print("AI Web Scraper")
-        speak("Provide me your URL sir.")
-        url = input("Enter your URL : ")
-        
-        if url:
-            speak("Getting data from the website...")
-            result = scrape_website(url)
-            body_content = extract_body_content(result)
-            cleaned_content = clean_body_content(body_content)
-
-            # Store cleaned content for later use
-            # dom_content = cleaned_content
-            # print("\nDOM content:")
-            return cleaned_content.lower()
-    content = main()
-    print(content)
-    speak("Do you want to perform tasks on scraped data sir?")
-    de = takecommand().lower()
-    if "yes" in de or "perform task" in de:
-        speak("What task you want to perform sir?")
-        prompt = takecommand().lower()
-        datapre = content
-        data = f"{datapre} \n {prompt}" 
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        rp = model.generate_content(data)
-        cleaned_text = re.sub(r"\*", "", rp.text)
-        speak(cleaned_text)
-
 def main():
     print("Hey jarvis to wake up")
     wakeword()
@@ -208,7 +51,7 @@ def main():
             elif "open notepad" in query:
                 try:
                     os = dynamic_import("os")
-                    # npath = "C:\\Program Files\\Notepad++\\notepad++.exe"
+                    npath = "C:\\Program Files\\Notepad++\\notepad++.exe"
                     speak("Do you want to write in file sir?")
                     choice = takecommand().lower()
                     if "yes" in choice or "write" in choice:
@@ -364,9 +207,48 @@ def main():
                 pyautogui.hotkey('winleft', 'i')
             elif "close setting" in query:
                 subprocess = dynamic_import("subprocess")
-                subprocess.run(['taskkill', '/F', '/IM', 'SystemSettings.exe'], shell=True)
                 speak("Closing setting sir.")
+                subprocess.run(['taskkill', '/F', '/IM', 'SystemSettings.exe'], shell=True)
+                
+            elif "open file" in query:
+                find_and_open_file = dynamic_import("openfile").find_and_open_file
+                filename = dynamic_import("openfile").filename
+                os = dynamic_import("os")
+                start_directory = "C:\\"
+                speak("Please tell me your file name sir.")
+                file_name = takecommand().lower()
+                file_name = filename(file_name)
+                if not os.path.isdir(start_directory):
+                    speak(f"The directory '{start_directory}' does not exist.")
+                else:
+                    find_and_open_file(start_directory, file_name)            
 
+            elif "open whatsapp" in query:
+                os = dynamic_import("os")
+                npath = r"C:\Program Files\WindowsApps\5319275A.WhatsAppDesktop_2.2445.7.0_x64__cv1g1gvanyjgm\WhatsApp.exe"
+                os.startfile(npath)
+            elif "call" in query:
+                try:
+                    call = dynamic_import("call").call
+                    call(query)
+                except Exception as e:
+                    speak("Please try again sir.")
+                    mainfun()
+            elif "video call" in query:
+                try:
+                    video_call = dynamic_import("video_call").video_call
+                    video_call(query)
+                except Exception as e:
+                    speak("Please try again sir.")
+                    mainfun()
+            elif "find" in query or "chat" in query:
+                try:
+                    find = dynamic_import("find").find
+                    find()
+                except Exception as e:
+                    speak("Please try again sir.")
+                    mainfun() 
+                                   
             elif "volume up" in query or "increase volume" in query:
                 pyautogui = dynamic_import("pyautogui")
                 speak("Increasing system volumn sir.")
@@ -380,19 +262,13 @@ def main():
                 speak("Muting system volume sir.")
                 pyautogui.press("volumemute")
             elif "set volume to" in query:
-                set_volume_level = dynamic_import("set_volume_level")
+                set_volume_level = dynamic_import("set_volume_level").set_volume_level
                 volume_level = int(''.join(filter(str.isdigit, query)))
                 speak(f"Volume set at {volume_level} sir.")
                 set_volume_level(volume_level)
-            elif "what is volume" in query or "current volume" in query:
-                CLSCTX_ALL = dynamic_import("comtypes").CLSCTX_ALL
-                devices = AudioUtilities.GetSpeakers()
-                interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-                volume = cast(interface, POINTER(IAudioEndpointVolume))
-                current_volume = volume.GetMasterVolumeLevelScalar()
-                current_volume_percent = current_volume * 100
-                current_volume_percent = round(current_volume_percent)
-                speak(f"Current system volume is {current_volume_percent} sir.")
+            elif "volume now" in query or "current volume" in query:
+                volume_now = dynamic_import("volume_now").volume_now
+                volume_now()
 
             elif "open camera" in query:
                 cv2 = dynamic_import("cv2")
@@ -411,6 +287,22 @@ def main():
                 cap.release()
                 cv2.destroyAllWindows()
 
+            elif "temperature" in query or "weather" in query or "humidity" in query or "wind" in query:
+                extract_city = dynamic_import("getcity").extract_city
+                extract_city = dynamic_import("getcity").extract_city
+                get_weather = dynamic_import("temperature").get_weather
+                speak("Checking for temperature sir.")
+                city = query
+                city_weather = extract_city(city)
+                print(city_weather)
+                get_weather(city_weather)               
+
+            elif "which song" in query or "what song" in query:
+                extract_lyrics = dynamic_import("findsong").extract_lyrics
+                song = dynamic_import("findsong").song
+                lyrics = extract_lyrics(query)
+                song(lyrics)
+                
             elif "switch tab" in query:
                 pyautogui = dynamic_import("pyautogui")
                 pyautogui.hotkey('alt','tab')
@@ -468,34 +360,8 @@ def main():
 
             elif "favourite song" in query:
                 try:
-                    webbrowser = dynamic_import("webbrowser")
-                    speak("Which playlist would you like to play sir?")
-                    choice = takecommand().lower()
-                    def firstp():
-                        webbrowser.open("") #add your own playlist link here.
-                        speak("Opening your favourite song sir.")
-                    def secondp():
-                        webbrowser.open("") #add your own playlist link here.
-                        speak("Opening your favourite song sir.")
-                    def thirdp():
-                        webbrowser.open("") #add your own playlist link here.
-                        speak("Opening your favourite song sir.")
-                    if "first" in choice:
-                        firstp()
-                    elif "second" in choice:
-                        secondp()
-                    elif "third" in choice:
-                        thirdp()
-                    elif "anyone" in choice or "random" in choice:
-                        random = dynamic_import("random")
-                        randomn = random.randint(1,3)
-                        print(randomn)
-                        if randomn == 1:
-                            firstp()
-                        elif randomn == 2:
-                            secondp()
-                    else:
-                        webbrowser.open("https://www.youtube.com/")
+                    favouritesong = dynamic_import("favouritesong").favouritesong
+                    favouritesong()
                 except Exception as e:
                     mainfun()
                     
@@ -507,6 +373,7 @@ def main():
 
             elif "time now" in query:
                 datetime = dynamic_import("datetime")
+                time = dynamic_import("time")
                 hour = int(datetime.datetime.now().hour)
                 tt = time.strftime("%I:%M %p")
                 speak(f"Its {tt}.")
@@ -544,6 +411,7 @@ def main():
 
             elif "pick up" in query or "accept" in query or "receive" in query:
                 time = dynamic_import("time")
+                click_action = dynamic_import("click_action").click_action
                 if "transfer" in query:
                     time.sleep(5) 
                     click_action('transfercall.png', 'Receive')
@@ -554,11 +422,13 @@ def main():
                     speak("Call received sir.")
             elif "decline" in query or "reject" in query:
                 time = dynamic_import("time")
+                click_action = dynamic_import("click_action").click_action
                 time.sleep(5) 
                 click_action('declinecall.png', 'Decline')
                 speak("Call declined sir.")
             elif "end" in query:
                 time = dynamic_import("time")
+                click_action = dynamic_import("click_action").click_action
                 time.sleep(5) 
                 click_action('endcall.png', 'Decline')
                 speak("Call ended sir.")
@@ -614,23 +484,17 @@ def main():
                 except Exception as e:
                     mainfun()
 
-            elif "hide this folder" in query or "hide all files" in query:
+            elif "hide this folder" in query or "hide all file" in query:
                 os = dynamic_import("os")
-                speak("Do you want to hide folder or make folder visible sir?")
-                command = takecommand()
-                if "hide this folder" in command:
-                    os = dynamic_import("os")
-                    os.system("attrib +h /s /d")
-                    speak("All the fildes are hiden sir.")
-                elif "visible this folder" in command:
-                    os = dynamic_import("os")
-                    os.system("attrib -h /s /d")
-                    speak("All the files are now visible.")
-                elif "leave it" in command or "leave for now" in command:
-                    speak("Ok sir.")
-
+                os.system("attrib +h /s /d")
+                speak("All the fildes are hiden sir.")
+            elif "unhide this folder" in query or "unhide all file" in query:
+                os = dynamic_import("os")
+                os.system("attrib -h /s /d")
+                speak("All the files are now visible.")
+                
             elif "read pdf" in query:
-                dynamic_import("pdfreader")
+                pdfreader = dynamic_import("pdfreader").pdfreader
                 pdfreader()
 
             elif "activate how to" in query:
@@ -644,18 +508,8 @@ def main():
                 speak(how_to[0].summary)
 
             elif "how much power we have" in query or "battery percentage" in query:
-                psutil = dynamic_import("psutil")
-                battery = psutil.sensors_battery()
-                percentage = battery.percent
-                speak(f"Our system has {percentage} percent battery sir.")
-                if percentage >= 75:
-                    speak("We have enough battery to work sir.")
-                elif percentage < 75 and percentage >= 40:
-                    speak("We can wait or pluge in charger sir.")
-                elif percentage < 40 and percentage >= 15:
-                    speak("We have low battery, Please pluge in the charger sir.")
-                else:
-                    speak("Please pluge in charger else system will go shut down sir.")
+                batterypercentage = dynamic_import("batterypercentage").batterypercentage
+                batterypercentage()
 
             elif "shutdown" in query:
                 os = dynamic_import("os")
@@ -670,13 +524,16 @@ def main():
                 speak("sleeping the system sir.")
                 os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
 
-            elif "do some calculations" in query or "can you calculate" in query:
+            elif "do some calculation" in query or "can you calculate" in query:
+                calculation = dynamic_import("calculation").calculation
                 calculation()
-
-            elif "generate a password" in query:
+                
+            elif "generate a password" in query or "generate password" in query:
+                pwdgenerator = dynamic_import("pwdgenerator").pwdgenerator
                 pwdgenerator()
 
             elif "scrap website" in query or "scrape website" in query:
+                scrape = dynamic_import("scrapeweb").scrape
                 scrape()
             
             elif "play game" in query or "play a game" in query:
@@ -707,28 +564,64 @@ def main():
                 ul = st.upload()
                 ul = ul / 8000000
                 speak(f"We have {dl} mb per second download speed and {ul} mb per second upload speed sir.")
+                
+            elif "download video" in query or "from youtube" in query:
+                download = dynamic_import("Youtube_video_Downloader").download
+                speak("Please provide me with a link to your video sir.")
+                video_url = input("Enter the YouTube URL: ")    
+                download(video_url)
+            
+            elif "extract text" in query:
+                pytesseract = dynamic_import("pytesseract")
+                Image = dynamic_import("PIL").Image
+                pytesseract.pytesseract.tesseract_cmd = r'' # Your tesseract.exe path here.
+                speak("Provide me path to your image sir.")
+                path = input("Path to your image : ")
+                speak("Extracting text from image sir.")
+                image = Image.open(path)
+                extracted_text = pytesseract.image_to_string(image)
+                speak(extracted_text)
+  
+            elif "data analysis" in query:
+                choice = dynamic_import("DataAnalysis").choice
+                load_csv = dynamic_import("DataAnalysis").load_csv
+                analyze_data = dynamic_import("DataAnalysis").analyze_data 
+                file_path = input("Enter the CSV file path: ")
+                data = load_csv(file_path)
+                speak(f"You have following columns in the data sir.")
+                print( {list(data.columns)})  
+                user_prompt = choice()  
+                result = analyze_data(data, user_prompt)
+                speak(result)
+                
+            elif "gesture" in query:
+                main = dynamic_import("gesture").main
+                speak("This feature is coming soon sir.")
+                # main()
 
-            elif "you can rest" in query or "you can sleep" in query:
+            elif "you can rest" in query or "you can sleep" in query or "wait" in query:
                 speak("Thank you for giving me rest.")
                 speak("Wake me up when you need me sir.")
                 main()
                 
+            elif "perform task" in query:
+                re = dynamic_import("re")
+                genai = dynamic_import("google.generativeai")
+                speak("Provide me your data sir.")
+                data = input("Provide your data : ")
+                speak("What you want to perform sir.")
+                task = takecommand().lower()
+                query = f"{data} {task}give me only thing what is asked for don't explain."
+                genai.configure(api_key="") # Add your Google gemini api key here. 
+                model = genai.GenerativeModel("gemini-1.5-flash")
+                rp = model.generate_content(query)
+                cleaned_text = re.sub(r"\*","",rp.text)
+                speak(cleaned_text)
+                
             elif "what" in query or "write me" in query or "tell me" in query or "where" in query or "which" in query or "when" in query or "who" in query or "may" in query or "can" in query or "how" in query or "should" in query:
                 try:
-                    re = dynamic_import("re")
-                    genai = dynamic_import("google.generativeai")
-                    if "greet me" in query:
-                        wish()
-                    elif "your name" in query or "who are you" in query or "about yourself" in query or "about your self" in query:
-                        speak("Hi,I am jarvis sir.")
-                        speak("I am here to assist you. How can i help you sir?")
-                    else:
-                        query = f"{query} give me only thing what is asked for don't explain."
-                        genai.configure(api_key="") #-> Add your Google gemini api key here. 
-                        model = genai.GenerativeModel("gemini-1.5-flash")
-                        rp = model.generate_content(query)
-                        cleaned_text = re.sub(r"\*", "", rp.text)
-                        speak(cleaned_text)
+                    execute = dynamic_import("assistant").execute
+                    execute(query)
                 except Exception as e:
                     mainfun()
                 
