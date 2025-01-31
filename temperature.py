@@ -2,7 +2,7 @@ import requests
 from audio import speak
 
 def get_weather(city_name):
-    api_key = "5184227b908601d5f61f34b1f84a1732"
+    api_key = "" # Your weatherstack api key here.
     base_url = "http://api.weatherstack.com/current"
     params = {
         'access_key': api_key,
