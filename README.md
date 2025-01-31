@@ -178,11 +178,11 @@ pip install -r requirements.txt
 
 6.  **"Check internet speed"**: Measures and displays download/upload speeds.
 
-7.  **"Data analysis [Csv file]"**: Performs data analysis on provided data.
+7.  **"Data analysis"**: Performs data analysis on provided data. *(Provide csv file).*
 
-8.  **"Extract text [Path of image]"**: Extracts text from image.
+8.  **"Extract text"**: Extracts text from image. *(Provide path of image).*
 
-9.  **"Download video from youtube [Link of video]"**: Downloads youtube video in your system.
+9.  **"Download video from youtube"**: Downloads youtube video in your system. *(Provide link of video).*
 
   
 
