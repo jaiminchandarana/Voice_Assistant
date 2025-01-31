@@ -11,7 +11,7 @@ def call(name):
             words_after_call = words[index:]
             calling = " ".join(words_after_call)
         speak(f"Calling {calling} sir")
-        npath = r"C:\Program Files\WindowsApps\5319275A.WhatsAppDesktop_2.2445.7.0_x64__cv1g1gvanyjgm\WhatsApp.exe"
+        npath = r"" # Your whatsapp.exe path here.
         os.startfile(npath)
         pyautogui.click(489,156)
         pyautogui.click(489,156)
