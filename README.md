@@ -174,9 +174,9 @@ pip install -r requirements.txt
 
 4.  **"Do some calculations"**: Performs basic math operations, For example., **"2 + 2"**.
 
-5.  **"scrape webpage"**: scrapes data from a specified webpage (Provide URL)
+5.  **"scrape webpage"**: scrapes data from a specified webpage *(Provide URL).*
 
-6.  **"scrape website"**: scrapes data from a specified website (provide URL).
+6.  **"scrape website"**: scrapes data from a specified website *(provide URL).*
 
 7.  **"Check internet speed"**: Measures and displays download/upload speeds.
 
