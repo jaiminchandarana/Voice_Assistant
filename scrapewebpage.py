@@ -4,7 +4,7 @@ import re
 import google.generativeai as genai
 
 def scrape():
-    genai.configure(api_key="AIzaSyCUv38iXDaLaVKUopLtFHkp9OkF3Zgabgw")
+    genai.configure(api_key="")
     def main():
         speak("Provide me your URL sir.")
         url = input("Enter your URL : ")
